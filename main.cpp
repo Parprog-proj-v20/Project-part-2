@@ -127,33 +127,38 @@ public:
 * 
 */
 void run() {
-    int n = 200;
     double time, speedup, linear_speedup;
-
+    std::vector<size_t> sizes = { 100, 250 };
     std::vector<int> thread_counts = { 1, 2, 4, 8 };
     std::vector<std::string> types = { "static", "dynamic", "guided" };
 
-    std::cout << "Перемножение матриц размером: " << n << "x" << n << " * " << n << "x" << n << "\n" << std::endl;
+    std::cout << std::string(60, '-') << std::endl;
+    for (int size : sizes) {
+        std::cout << "\n\tПЕРЕМНОЖЕНИЕ МАТРИЦ: A[" << size << "x" << size << "] * B[" << size << "x" << size << "]\n" << std::endl;
+        std::cout << std::string(60, '-') << std::endl;
 
-    Matrix m(n);
-    m.initialize();
+        Matrix m(size);
+        m.initialize();
 
-    double linear_time = m.multiplyLinear();
-    std::cout << "Время выполнения с линейным перемножением: " << linear_time << " сек" << std::endl;
+        double linear_time = m.multiplyLinear();
+        double base_time = m.multiplyParallel(1, "static");
+        std::cout << "> ЛИНЕЙНОЕ ПЕРЕМНОЖЕНИЕ, время выполнения: " << linear_time << " сек" << std::endl;
+        std::cout << "> 1 ПОТОК, время выполнения: " << base_time << " сек" << std::endl;
+        std::cout << std::string(60, '-') << std::endl;
 
-    double base_time = m.multiplyParallel(1, "static");
-    std::cout << "Время выполнения с 1 потоком: " << base_time << " сек\n" << std::endl;
+        for (int threads : thread_counts) {
+            std::cout << "> КОЛИЧЕСТВО ПОТОКОВ: " << threads << std::endl;
 
-    for (int threads : thread_counts) {
-        for (const auto& schedule : types) {
-            time = m.multiplyParallel(threads, schedule);
-            speedup = base_time / time;
-            linear_speedup = linear_time / time;
+            for (const auto& schedule : types) {
+                time = m.multiplyParallel(threads, schedule);
+                speedup = base_time / time;
+                linear_speedup = linear_time / time;
 
-            std::cout << "Кол-во потоков: " << threads << ", планировка: " << schedule << ", время: " << time
-                << "сек\n\tускорение по отнош. к 1 потоку: " << speedup << "\n\tускорение по отнош. к линейному: " << linear_speedup << std::endl;
+                std::cout << "\n> ПЛАНИРОВКА: " << schedule << "\n> ВРЕМЯ: " << time
+                    << " сек\n\tУскорение по отнош. к линейному: " << linear_speedup << "\n\tУскорение по отнош.к 1 потоку: " << speedup << std::endl;
+            }
+            std::cout << std::string(60, '-') << std::endl;
         }
-        std::cout << std::endl;
     }
 }
 
