@@ -129,3 +129,17 @@ void MatrixTest::testLinearVsParallel() {
     
     assert(areMatricesEqual(linearResult, parallelResult));
 }
+
+
+void MatrixTest::testKnownMatrices() {
+    std::cout << "Тестирование на известных матрицах" << std::endl;
+    
+    Matrix matrix(2);
+    matrix.A = {{1, 2}, {3, 4}};
+    matrix.B = {{2, 0}, {1, 2}};
+    
+    std::vector<std::vector<int>> expected = {{4, 4}, {10, 8}};
+    
+    matrix.multiplyParallel(2, "static");
+    assert(areMatricesEqual(matrix.C, expected));
+}
