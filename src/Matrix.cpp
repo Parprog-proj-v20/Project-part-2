@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include <iostream>
 #include <random>
 #include <chrono>
 #include <omp.h>
@@ -44,44 +45,51 @@ double Matrix::multiplyParallel(int num_threads, const std::string& type) {
     omp_set_num_threads(num_threads);
     auto start = std::chrono::high_resolution_clock::now();
 
-    // Статическая планировка
-    if (type == "static") {
-#pragma omp parallel for schedule(static) collapse(2)
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                int sum = 0;
-                for (int k = 0; k < n; k++) {
-                    sum += A[i][k] * B[k][j];
+    #pragma omp parallel
+    {
+        int tid = omp_get_thread_num();
+        std::cout << "[Поток " << tid << " запущен]\n";
+
+        // Статическая планировка
+        if (type == "static") {
+            #pragma omp parallel for schedule(static) collapse(2)
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int sum = 0;
+                    for (int k = 0; k < n; k++) {
+                        sum += A[i][k] * B[k][j];
+                    }
+                    C[i][j] = sum;
                 }
-                C[i][j] = sum;
             }
         }
-    }
-    // Динамическая планировка
-    else if (type == "dynamic") {
-#pragma omp parallel for schedule(dynamic) collapse(2)
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                int sum = 0;
-                for (int k = 0; k < n; k++) {
-                    sum += A[i][k] * B[k][j];
+        // Динамическая планировка
+        else if (type == "dynamic") {
+            #pragma omp parallel for schedule(dynamic) collapse(2)
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int sum = 0;
+                    for (int k = 0; k < n; k++) {
+                        sum += A[i][k] * B[k][j];
+                    }
+                    C[i][j] = sum;
                 }
-                C[i][j] = sum;
             }
         }
-    }
-    // Управляемая планировка
-    else if (type == "guided") {
-#pragma omp parallel for schedule(guided) collapse(2)
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                int sum = 0;
-                for (int k = 0; k < n; k++) {
-                    sum += A[i][k] * B[k][j];
+        // Управляемая планировка
+        else if (type == "guided") {
+            #pragma omp parallel for schedule(guided) collapse(2)
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int sum = 0;
+                    for (int k = 0; k < n; k++) {
+                        sum += A[i][k] * B[k][j];
+                    }
+                    C[i][j] = sum;
                 }
-                C[i][j] = sum;
             }
         }
+        std::cout << "[Поток " << tid << " завершил работу]\n";
     }
 
     auto end = std::chrono::high_resolution_clock::now();
