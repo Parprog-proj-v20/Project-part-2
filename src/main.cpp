@@ -14,8 +14,8 @@
 */
 void run() {
     double time, speedup, linear_speedup;
-    std::vector<int> sizes = { 100, 200 };
-    std::vector<int> thread_counts = { 2, 4, 8 };
+    std::vector<int> sizes = { 500, 600, 800, 1000, 1200 };
+    std::vector<int> thread_counts = { 1, 2, 4, 8 };
     std::vector<std::string> types = { "static", "dynamic", "guided" };
     
     for (int size : sizes) {
