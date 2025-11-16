@@ -6,7 +6,8 @@
 #include <iomanip>
 
 /**
-* 
+* @brief Класс матриц. Инициализирует три квадратные матрицы A, B, C типа int размером n*n. 
+* Перемножает A и B линейно и с использованием распараллеливания.
 */
 class Matrix {
 private:
@@ -15,8 +16,8 @@ private:
 
 public:
     /**
-    * Конструктор матриц заданных размеров. Результирующая матрица C
-    * инициализируется как нулевая
+    * @brief Конструктор матриц заданных размеров. Выделяет память под них.
+    * Результирующая матрица C инициализируется как нулевая.
     * 
     * @param n - количество строк и столбцов каждой матрицы
     */
@@ -27,7 +28,7 @@ public:
     }
 
     /**
-    * Заполнение матриц A и B случайными числами
+    * @brief Заполнение матриц A и B случайными числами в диапазоне [-100, 100].
     */
     void initialize() {
         std::random_device rd;
@@ -43,9 +44,9 @@ public:
     }
 
     /**
-    * Обычное линейное умножение
+    * Линейное умножение матриц (без распараллеливания). 
     * 
-    * @return время выполнения
+    * @return время выполнения в секундах
     */
     double multiplyLinear() {
         auto start = std::chrono::high_resolution_clock::now();
@@ -66,13 +67,14 @@ public:
     }
 
     /**
-    * Параллельное умножение
+    * @brief Параллельное умножение матриц с использованием OpenMP.
     * 
-    * @return время выполнения
+    * @param num_threads - количество потоков 
+    * @param type - тип планирования для OpenMP: static, dynamic или guided
+    * @return время выполнения в секундах
     */
     double multiplyParallel(int num_threads, const std::string& type) {
         omp_set_num_threads(num_threads);
-
         auto start = std::chrono::high_resolution_clock::now();
 
         // Статическая планировка
@@ -88,7 +90,6 @@ public:
                 }
             }
         }
-
         // Динамическая планировка
         else if (type == "dynamic") {
             #pragma omp parallel for schedule(dynamic) collapse(2)
@@ -102,7 +103,6 @@ public:
                 }
             }
         }
-
         // Управляемая планировка
         else if (type == "guided") {
             #pragma omp parallel for schedule(guided) collapse(2)
@@ -124,15 +124,18 @@ public:
 };
 
 /**
-* 
+* @brief Создание матриц установленных размеров и их перемножение при разном количестве
+* потоком и разных типах планировок. Вызывает функции для получения времени линейного
+* перемножения и однопоточного перемножения с планировкой static, затем сравнивает время 
+* выполнения и рассчитывает ускорение. 
 */
 void run() {
     double time, speedup, linear_speedup;
-    std::vector<size_t> sizes = { 100, 250 };
+    std::vector<size_t> sizes = { 400, 500, 600, 800, 1000 };
     std::vector<int> thread_counts = { 1, 2, 4, 8 };
     std::vector<std::string> types = { "static", "dynamic", "guided" };
-
     std::cout << std::string(60, '-') << std::endl;
+
     for (int size : sizes) {
         std::cout << "\n\tПЕРЕМНОЖЕНИЕ МАТРИЦ: A[" << size << "x" << size << "] * B[" << size << "x" << size << "]\n" << std::endl;
         std::cout << std::string(60, '-') << std::endl;
@@ -141,9 +144,9 @@ void run() {
         m.initialize();
 
         double linear_time = m.multiplyLinear();
-        double base_time = m.multiplyParallel(1, "static");
+        double single_thread_time = m.multiplyParallel(1, "static");
         std::cout << "> ЛИНЕЙНОЕ ПЕРЕМНОЖЕНИЕ, время выполнения: " << linear_time << " сек" << std::endl;
-        std::cout << "> 1 ПОТОК, время выполнения: " << base_time << " сек" << std::endl;
+        std::cout << "> 1 ПОТОК, время выполнения: " << single_thread_time << " сек" << std::endl;
         std::cout << std::string(60, '-') << std::endl;
 
         for (int threads : thread_counts) {
@@ -151,7 +154,7 @@ void run() {
 
             for (const auto& schedule : types) {
                 time = m.multiplyParallel(threads, schedule);
-                speedup = base_time / time;
+                speedup = single_thread_time / time;
                 linear_speedup = linear_time / time;
 
                 std::cout << "\n> ПЛАНИРОВКА: " << schedule << "\n> ВРЕМЯ: " << time
@@ -159,6 +162,7 @@ void run() {
             }
             std::cout << std::string(60, '-') << std::endl;
         }
+        std::cout << "\n" << std::string(60, '-') << std::endl;
     }
 }
 
