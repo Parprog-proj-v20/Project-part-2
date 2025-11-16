@@ -178,3 +178,10 @@ std::vector<std::vector<int>> MatrixTest::simpleMultiply(const std::vector<std::
 }
 
 
+void MatrixTest::validateSpeedup(double singleThreadTime, double multiThreadTime, 
+                                int threadCount, const std::string& testCase) {
+    double speedup = singleThreadTime / multiThreadTime;
+    std::cout << "Ускорение для " << testCase << " с " << threadCount 
+              << " потоками: " << speedup << std::endl;
+}
+
