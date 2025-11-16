@@ -91,3 +91,24 @@ void MatrixTest::testPerformance() {
         assert(multiThreadTime <= singleThreadTime * 1.5);
     }
 }
+
+
+void MatrixTest::testSchedulingTypes() {
+    std::cout << "Сравнение типов планирования" << std::endl;
+    
+    Matrix matrix(200);
+    matrix.initialize();
+    
+    std::vector<std::string> schedules = {"static", "dynamic", "guided"};
+    std::vector<double> times;
+    
+    for (const auto& schedule : schedules) {
+        double time = matrix.multiplyParallel(4, schedule);
+        times.push_back(time);
+        std::cout << "Время для " << schedule << ": " << time << " сек" << std::endl;
+    }
+    
+    for (double time : times) {
+        assert(time > 0 && time < 10.0);
+    }
+}
