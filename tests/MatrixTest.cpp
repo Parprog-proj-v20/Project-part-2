@@ -74,3 +74,20 @@ void MatrixTest::testEdgeCases() {
     matrix3.multiplyParallel(2, "static");
     assert(areMatricesEqual(matrix3.C, matrix3.A));
 }
+
+
+void MatrixTest::testPerformance() {
+    std::cout << "Тестирование производительности" << std::endl;
+    
+    Matrix matrix(300);
+    matrix.initialize();
+    
+    double singleThreadTime = matrix.multiplyParallel(1, "static");
+    
+    std::vector<int> threadCounts = {2, 4};
+    for (int threads : threadCounts) {
+        double multiThreadTime = matrix.multiplyParallel(threads, "static");
+        validateSpeedup(singleThreadTime, multiThreadTime, threads, "static scheduling");
+        assert(multiThreadTime <= singleThreadTime * 1.5);
+    }
+}
