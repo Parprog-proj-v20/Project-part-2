@@ -143,3 +143,19 @@ void MatrixTest::testKnownMatrices() {
     matrix.multiplyParallel(2, "static");
     assert(areMatricesEqual(matrix.C, expected));
 }
+
+
+bool MatrixTest::areMatricesEqual(const std::vector<std::vector<int>>& matrix1, 
+                                 const std::vector<std::vector<int>>& matrix2) {
+    if (matrix1.size() != matrix2.size()) return false;
+    
+    for (size_t i = 0; i < matrix1.size(); i++) {
+        if (matrix1[i].size() != matrix2[i].size()) return false;
+        for (size_t j = 0; j < matrix1[i].size(); j++) {
+            if (matrix1[i][j] != matrix2[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
