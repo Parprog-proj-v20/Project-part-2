@@ -1,3 +1,40 @@
+#include "MatrixTest.h"
+#include <chrono>
+#include <omp.h>
+
+const double MatrixTest::PERFORMANCE_TOLERANCE = 0.8;
+
+void MatrixTest::runAllTests() {
+    std::cout << "*** Запуск тестов ***" << std::endl;
+    
+    int passedTests = 0;
+    int totalTests = 0;
+
+    auto runTest = [&](const std::string& testName, void(*testFunc)()) {
+        totalTests++;
+        std::cout << "\n    Тест: " << testName << std::endl;
+        try {
+            testFunc();
+            std::cout << "    Тест пройден: " << testName << std::endl;
+            passedTests++;
+        } catch (const std::exception& e) {
+            std::cout << "    Тест НЕ пройден: " << testName << " - " << e.what() << std::endl;
+        }
+    };
+
+    runTest("Корректность умножения", testMultiplicationCorrectness);
+    runTest("Различные размеры матриц", testDifferentSizes);
+    runTest("Граничные случаи", testEdgeCases);
+    runTest("Производительность", testPerformance);
+    runTest("Типы планирования", testSchedulingTypes);
+    runTest("Сравнение линейного и параллельного", testLinearVsParallel);
+    runTest("Известные матрицы", testKnownMatrices);
+
+    std::cout << "\n*** Результаты тестов ***" << std::endl;
+    std::cout << "Пройдено: " << passedTests << "/" << totalTests << " тестов" << std::endl;
+}
+
+
 void MatrixTest::testMultiplicationCorrectness() {
     std::cout << "Проверка корректности умножения матриц 4x4" << std::endl;
     
