@@ -27,3 +27,23 @@ void MatrixTest::testMultiplicationCorrectness() {
         assert(areMatricesEqual(matrix.C, expected));
     }
 }
+
+
+void MatrixTest::testDifferentSizes() {
+    std::vector<int> testSizes = {2, 10, 50};
+    
+    for (int size : testSizes) {
+        std::cout << "Тестирование размера " << size << "x" << size << "..." << std::endl;
+        
+        Matrix matrix(size);
+        matrix.initialize();
+        
+        auto expected = simpleMultiply(matrix.A, matrix.B);
+        
+        matrix.multiplyLinear();
+        assert(areMatricesEqual(matrix.C, expected));
+        
+        matrix.multiplyParallel(4, "static");
+        assert(areMatricesEqual(matrix.C, expected));
+    }
+}
