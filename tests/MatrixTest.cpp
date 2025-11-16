@@ -112,3 +112,20 @@ void MatrixTest::testSchedulingTypes() {
         assert(time > 0 && time < 10.0);
     }
 }
+
+
+
+void MatrixTest::testLinearVsParallel() {
+    std::cout << "Сравнение линейного и параллельного умножения" << std::endl;
+    
+    Matrix matrix(100);
+    matrix.initialize();
+    
+    matrix.multiplyLinear();
+    auto linearResult = matrix.C;
+    
+    matrix.multiplyParallel(2, "static");
+    auto parallelResult = matrix.C;
+    
+    assert(areMatricesEqual(linearResult, parallelResult));
+}
