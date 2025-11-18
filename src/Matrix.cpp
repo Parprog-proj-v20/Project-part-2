@@ -61,10 +61,14 @@ double Matrix::multiplyLinear() {
 double Matrix::multiplyParallel(int num_threads, const std::string& type) {
     omp_set_num_threads(num_threads);
     auto start = std::chrono::high_resolution_clock::now();
+    int tid = 0;
+    double thread_start_time = 0;
+    double thread_time = 0;
 
-    #pragma omp parallel
+    #pragma omp parallel private(tid, thread_start_time, thread_time)
     {
-        int tid = omp_get_thread_num();
+        tid = omp_get_thread_num();
+        thread_start_time = omp_get_wtime();
         std::cout << "[Поток " << tid << " запущен]\n";
 
         // Статическая планировка
@@ -106,7 +110,12 @@ double Matrix::multiplyParallel(int num_threads, const std::string& type) {
                 }
             }
         }
-        std::cout << "[Поток " << tid << " завершил работу]\n";
+
+        thread_time = omp_get_wtime() - thread_start_time;
+        #pragma omp critical
+        {
+            std::cout << "[Поток " << tid << " завершил работу за " << thread_time << " секунд]\n";
+        }
     }
 
     auto end = std::chrono::high_resolution_clock::now();
