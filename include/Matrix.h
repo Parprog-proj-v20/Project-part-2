@@ -21,6 +21,37 @@ public:
     Matrix(int n);
 
     /**
+    * @brief Сеттер первой матрицы A. Копирует матрицу newA во внутреннюю переменную класса.
+    *
+    * @param newA - матрица, которая будет скопирована в A 
+    */
+    void setMatrixA(const std::vector<std::vector<int>>& newA); 
+    /**
+    * @brief Сеттер второй матрицы B. Копирует матрицу newB во внутреннюю переменную класса.
+    *
+    * @param newB - матрица, которая будет скопирована в B
+    */
+    void setMatrixB(const std::vector<std::vector<int>>& newB);
+    /**
+    * @brief Геттер первой матрицы A.
+    *
+    * @return константная ссылка на матрицу A
+    */
+    const std::vector<std::vector<int>>& getMatrixA() const; 
+    /**
+    * @brief Геттер второй матрицы B.
+    *
+    * @return константная ссылка на матрицу B
+    */
+    const std::vector<std::vector<int>>& getMatrixB() const; 
+    /**
+    * @brief Геттер результирующей матрицы C.
+    *
+    * @return константная ссылка на матрицу C
+    */
+    const std::vector<std::vector<int>>& getMatrixC() const;
+
+    /**
     * @brief Заполнение матриц A и B случайными числами в диапазоне [-100, 100].
     */
     void initialize();
@@ -40,11 +71,4 @@ public:
     * @return время выполнения в секундах
     */
     double multiplyParallel(int num_threads, const std::string& type);
-
-    // Методы для тестирования
-    void setMatrixA(const std::vector<std::vector<int>>& newA); // Установка матрицы A
-    void setMatrixB(const std::vector<std::vector<int>>& newB); // Установка матрицы В
-    const std::vector<std::vector<int>>& getMatrixC() const; // Получение результата C
-    const std::vector<std::vector<int>>& getMatrixA() const; // Получение результата А
-    const std::vector<std::vector<int>>& getMatrixB() const; // Получение результата В
 };
