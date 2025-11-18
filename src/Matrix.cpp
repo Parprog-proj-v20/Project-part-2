@@ -95,4 +95,27 @@ double Matrix::multiplyParallel(int num_threads, const std::string& type) {
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;
     return duration.count();
+
+
+}
+
+
+void Matrix::setMatrixA(const std::vector<std::vector<int>>& newA) {
+    A = newA;
+}
+
+void Matrix::setMatrixB(const std::vector<std::vector<int>>& newB) {
+    B = newB;
+}
+
+const std::vector<std::vector<int>>& Matrix::getMatrixC() const {
+    return C;
+}
+
+const std::vector<std::vector<int>>& Matrix::getMatrixA() const {
+    return A;
+}
+
+const std::vector<std::vector<int>>& Matrix::getMatrixB() const {
+    return B;
 }
