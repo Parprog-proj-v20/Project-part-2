@@ -21,6 +21,8 @@ find_package(OpenMP REQUIRED)
 add_executable(Project-part-2 ${MAIN_SOURCES})
 target_link_libraries(Project-part-2 OpenMP::OpenMP_CXX)
 
+target_compile_options(Project-part-2 PRIVATE -O2)
+
 # Явно указываем пути include
 target_include_directories(Project-part-2
     PUBLIC 
@@ -44,3 +46,4 @@ target_include_directories(matrix_tests
 if(MSVC)
     target_compile_options(matrix_tests PRIVATE "/openmp")
 endif()
+
